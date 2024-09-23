@@ -32,12 +32,42 @@ export async function addComment(
 }
 
 export async function onDeletePost(id: string) {
-  const {data, errors} = await cookieBasedClient.models.Post.delete({
-    id
-  })
+  const { data: commentsData, errors: commentErrors } = await cookieBasedClient.models.Comment.list({
+    filter: { postId: { eq: id } }
+  });
 
-  console.log('data delete', data, errors)
-  revalidatePath('/')
+  if (commentErrors) {
+    console.error('Error fetching comments:', commentErrors);
+    return;
+  }
+
+  console.log(commentsData)
+
+  if (commentsData) {
+    for (const comment of commentsData) {
+      const { errors } = await cookieBasedClient.models.Comment.delete({
+        id: comment.id,
+      });
+      if (errors) {
+        console.error('Error deleting comment:', errors);
+      } else {
+        console.log('Deleted comment:', comment.id);
+      }
+    }
+  }
+
+  // Now delete the post itself
+  const { errors: postErrors } = await cookieBasedClient.models.Post.delete({
+    id,
+  });
+
+  if (postErrors) {
+    console.error('Error deleting post:', postErrors);
+  } else {
+    console.log('Deleted post:', id);
+  }
+
+  revalidatePath('/');
 }
 
 export async function createPost(formData: FormData) {
