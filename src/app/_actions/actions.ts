@@ -8,22 +8,22 @@ import {Schema} from "../../../amplify/data/resource";
 export async function deleteComment(fromData: FormData) {
   const id = fromData.get('id')?.toString();
   if(!id) return;
-  const {data, error} = await cookieBasedClient.models.Comment.delete({
+  const {data, errors} = await cookieBasedClient.models.Comment.delete({
     id
   })
 
-  console.log('comment delete', data, error)
+  console.log('comment delete', data, errors)
 }
 
 export async function addComment(
   content: string,
-  post: Schema["Post"],
+  post: Schema["Post"]["type"],
   paramsId: string
 ) {
   console.log(content, post, paramsId);
   if(content.trim().length === 0) return;
   const {data, errors} = await cookieBasedClient.models.Comment.create({
-    post,
+    postId: post.id,
     content
   })
 

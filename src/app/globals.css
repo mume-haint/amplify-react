@@ -6,3 +6,11 @@
   --background: #ffffff;
   --foreground: #171717;
 }
+
+button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+  -webkit-appearance: button;
+  background-color: var(--amplify-internal-button-background-color);
+}

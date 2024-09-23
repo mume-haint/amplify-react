@@ -10,8 +10,8 @@ import { useTransition } from "react";
 
 export default function NavBar({ isSignedIn }: { isSignedIn: boolean }) {
   const [authCheck, setAuthCheck] = useState(isSignedIn);
-  const [isPending, startTransition] = useTransition();
- 
+  const [, startTransition] = useTransition();
+
   const router = useRouter();
   useEffect(() => {
     const hubListenerCancel = Hub.listen("auth", (data) => {
